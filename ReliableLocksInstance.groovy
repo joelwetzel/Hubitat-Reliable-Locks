@@ -104,7 +104,7 @@ def initialize() {
 	wrappedLockHandler(null)
 	
 	if (autoRefresh == true) {
-		runEvery10Minutes(refreshWrappedLock)
+		runEvery30Minutes(refreshWrappedLock)
 	}
 	else {
 		unschedule(refreshWrappedLock)	
