@@ -1,4 +1,4 @@
-# Hubitat-Reliable-Locks
+# Reliable Locks app for Hubitat
 An app that will create virtual locks that 'wrap' your physical lock devices, making them more reliable.
 
 ## Purpose
