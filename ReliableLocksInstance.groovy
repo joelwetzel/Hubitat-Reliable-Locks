@@ -50,7 +50,7 @@ def refreshTime = [
 def autoRefresh = [
 	name:				"autoRefresh",
 	type:				"bool",
-	title:				"Auto refresh every 10 minutes?",
+	title:				"Auto refresh every 30 minutes?",
 	defaultValue:		true,
 	required:			true
 ]
