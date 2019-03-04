@@ -28,20 +28,13 @@ metadata {
 	
 	preferences {
 		section {
-			input (
-				type: "bool",
-				name: "enableDebugLogging",
-				title: "Enable Debug Logging?",
-				required: true,
-				defaultValue: false
-			)
 		}
 	}
 }
 
 
 def log (msg) {
-	if (enableDebugLogging) {
+	if (getParent().enableDebugLogging) {
 		log.debug msg
 	}
 }
