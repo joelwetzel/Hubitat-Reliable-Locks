@@ -62,7 +62,21 @@ preferences {
 			input wrappedLock
 			input refreshTime
 			input autoRefresh
+			input (
+				type: "bool",
+				name: "enableDebugLogging",
+				title: "Enable Debug Logging?",
+				required: true,
+				defaultValue: true
+			)
 		}
+	}
+}
+
+
+def log(msg) {
+	if (enableDebugLogging) {
+		log.debug(msg)	
 	}
 }
 
@@ -78,7 +92,7 @@ def installed() {
 
 def uninstalled() {
     childDevices.each {
-		log.debug "Deleting child device: ${it.displayName}"
+		log.info "Deleting child device: ${it.displayName}"
 		deleteChildDevice(it.deviceNetworkId)
 	}
 }
@@ -115,8 +129,8 @@ def initialize() {
 def lockWrappedLock() {
 	def reliableLock = getChildDevice("Reliable-${wrappedLock.displayName}")
 	
-	log.debug "${reliableLock.displayName}:locking detected"
-	log.debug "${wrappedLock.displayName}:locking"
+	log "${reliableLock.displayName}:locking detected"
+	log "${wrappedLock.displayName}:locking"
 	wrappedLock.lock()
 	
 	runIn(refreshTime, refreshWrappedLock)
@@ -126,8 +140,8 @@ def lockWrappedLock() {
 def unlockWrappedLock() {
 	def reliableLock = getChildDevice("Reliable-${wrappedLock.displayName}")
 	
-	log.debug "${reliableLock.displayName}:unlocking detected"
-	log.debug "${wrappedLock.displayName}:unlocking"
+	log "${reliableLock.displayName}:unlocking detected"
+	log "${wrappedLock.displayName}:unlocking"
 	wrappedLock.unlock()
 	
 	runIn(refreshTime, refreshWrappedLock)
@@ -135,7 +149,7 @@ def unlockWrappedLock() {
 
 
 def refreshWrappedLock() {
-	log.debug "${wrappedLock.displayName}:refreshing"
+	log "${wrappedLock.displayName}:refreshing"
 	wrappedLock.refresh()
 }
 
@@ -144,13 +158,13 @@ def wrappedLockHandler(evt) {
 	def reliableLock = getChildDevice("Reliable-${wrappedLock.displayName}")
 
 	if (wrappedLock.currentValue("lock") == "locked") {
-		log.debug "${wrappedLock.displayName}:locked detected"
-		log.debug "${reliableLock.displayName}:setting locked"
+		log "${wrappedLock.displayName}:locked detected"
+		log "${reliableLock.displayName}:setting locked"
 		reliableLock.markAsLocked()
 	}
 	else {
-		log.debug "${wrappedLock.displayName}:unlocked detected"
-		log.debug "${reliableLock.displayName}:setting unlocked"
+		log "${wrappedLock.displayName}:unlocked detected"
+		log "${reliableLock.displayName}:setting unlocked"
 		reliableLock.markAsUnlocked()
 	}
 }
