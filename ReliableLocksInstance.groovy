@@ -41,17 +41,18 @@ def wrappedLock = [
 def refreshTime = [
 	name:				"refreshTime",
 	type:				"number",
-	title:				"Delay before Refresh",
+	title:				"After sending commands to lock, delay this many seconds and then refresh the lock",
 	defaultValue:		6,
 	required:			true
 ]
 
 
-def autoRefresh = [
-	name:				"autoRefresh",
-	type:				"bool",
-	title:				"Auto refresh every 30 minutes?",
-	defaultValue:		true,
+def autoRefreshOption = [
+	name:				"autoRefreshOption",
+	type:				"enum",
+	title:				"Auto refresh every X minutes?",
+	options:			["Never", "1", "5", "10", "30" ],
+	defaultValue:		"30",
 	required:			true
 ]
 
@@ -61,7 +62,7 @@ preferences {
 		section("") {
 			input wrappedLock
 			input refreshTime
-			input autoRefresh
+			input autoRefreshOption
 			input (
 				type: "bool",
 				name: "enableDebugLogging",
@@ -117,8 +118,17 @@ def initialize() {
 	// Make sure the ReliableLock state matches the WrappedLock upon initialization.
 	wrappedLockHandler(null)
 	
-	if (autoRefresh == true) {
+	if (autoRefreshOption == "30") {
 		runEvery30Minutes(refreshWrappedLock)
+	}
+	else if (autoRefreshOption == "10") {
+		runEvery10Minutes(refreshWrappedLock)
+	}
+	else if (autoRefreshOption == "5") {
+		runEvery5Minutes(refreshWrappedLock)
+	}
+	else if (autoRefreshOption == "1") {
+		runEvery1Minute(refreshWrappedLock)
 	}
 	else {
 		unschedule(refreshWrappedLock)	
@@ -168,22 +178,4 @@ def wrappedLockHandler(evt) {
 		reliableLock.markAsUnlocked()
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
