@@ -90,9 +90,6 @@ def mainPage() {
   			section("<b>Reliable Locks:</b>") {
 				app(name: "anyOpenApp", appName: "Reliable Locks Instance", namespace: "joelwetzel", title: "<b>Add a new Reliable Lock</b>", multiple: true)
 			}
-			section("<b>General</b>") {
-       			label title: "Enter a name for parent app (optional)", required: false
- 			}
 			display()
 		}
 	}
