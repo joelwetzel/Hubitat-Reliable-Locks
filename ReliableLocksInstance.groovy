@@ -15,7 +15,7 @@
  */
 
 import groovy.json.*
-	
+
 definition(
 	parent: "joelwetzel:Reliable Locks",
     name: "Reliable Locks Instance",
@@ -28,51 +28,49 @@ definition(
     iconX3Url: "")
 
 
-def wrappedLock = [
-	name:				"wrappedLock",
-	type:				"capability.lock",
-	title:				"Wrapped Lock",
-	description:		"Select the lock to WRAP IN RELIABILITY.",
-	multiple:			false,
-	required:			true
-]
-
-
-def refreshTime = [
-	name:				"refreshTime",
-	type:				"number",
-	title:				"After sending commands to lock, delay this many seconds and then refresh the lock",
-	defaultValue:		6,
-	required:			true
-]
-
-
-def autoRefreshOption = [
-	name:				"autoRefreshOption",
-	type:				"enum",
-	title:				"Auto refresh every X minutes?",
-	options:			["Never", "1", "5", "10", "30" ],
-	defaultValue:		"30",
-	required:			true
-]
-
-
 preferences {
 	page(name: "mainPage", title: "", install: true, uninstall: true) {
 		section(getFormat("title", "Reliable Lock Instance")) {
-		}
-		section("") {
-			input wrappedLock
-			input refreshTime
-			input autoRefreshOption
 			input (
-				type: "bool",
-				name: "enableDebugLogging",
-				title: "Enable Debug Logging?",
-				required: true,
-				defaultValue: true
-			)
+	            name:				"wrappedLock",
+	            type:				"capability.lock",
+	            title:				"Wrapped Lock",
+	            description:		"Select the lock to WRAP IN RELIABILITY.",
+	            multiple:			false,
+	            required:			true
+            )
+			input (
+                name:				"refreshTime",
+	            type:				"number",
+	            title:				"After sending commands to lock, delay this many seconds and then refresh the lock",
+	            defaultValue:		6,
+	            required:			true
+            )
+			input (
+            	name:				"autoRefreshOption",
+	            type:				"enum",
+	            title:				"Auto refresh every X minutes?",
+	            options:			["Never", "1", "5", "10", "30" ],
+	            defaultValue:		"30",
+	            required:			true
+            )
+			input (
+                type:               "bool",
+                name:               "retryLockCommands",
+                title:              "Retry lock/unlock commands if the lock doesn't respond the first time?",
+                required:           true,
+                defaultValue:       false
+            )
 		}
+        section() {
+            input (
+				type:               "bool",
+				name:               "enableDebugLogging",
+				title:              "Enable Debug Logging?",
+				required:           true,
+				defaultValue:       true
+			)
+        }
 	}
 }
 
@@ -137,6 +135,9 @@ def lockWrappedLock() {
 	log "${reliableLock.displayName}:locking detected"
 	log "${wrappedLock.displayName}:locking"
 	wrappedLock.lock()
+    
+    state.desiredLockState = "locked"
+    state.retryCount = 0
 	
 	runIn(refreshTime, refreshWrappedLock)
 }
@@ -148,6 +149,9 @@ def unlockWrappedLock() {
 	log "${reliableLock.displayName}:unlocking detected"
 	log "${wrappedLock.displayName}:unlocking"
 	wrappedLock.unlock()
+    
+    state.desiredLockState = "unlocked"
+    state.retryCount = 0
 	
 	runIn(refreshTime, refreshWrappedLock)
 }
@@ -156,6 +160,37 @@ def unlockWrappedLock() {
 def refreshWrappedLock() {
 	log "${wrappedLock.displayName}:refreshing"
 	wrappedLock.refresh()
+    
+    if (retryLockCommands) {
+        runIn(5, retryIfCommandNotFollowed)
+    }
+}
+
+
+def retryIfCommandNotFollowed() {
+    log "${wrappedLock.displayName}:retryIfCommandNotFollowed"
+    
+    // Check if the command had been followed.
+    def commandWasFollowed = wrappedLock.currentValue("lock") == state.desiredLockState
+    
+    if (!commandWasFollowed) {
+        log "Command was not followed. RetryCount is ${state.retryCount}."
+        
+        // Check if we have exceeded 2 retries.
+        if (state.retryCount < 3) {
+            // If we still need to retry, fire off lockWrappedLock or unlockWrappedLock again.
+            state.retryCount = state.retryCount + 1
+            if (state.desiredLockState == "locked") {
+                log "${wrappedLock.displayName}:locking"
+	            wrappedLock.lock()
+            }
+            else {
+                log "${wrappedLock.displayName}:unlocking"
+	            wrappedLock.unlock()
+            }
+            runIn(refreshTime, refreshWrappedLock)
+        }
+    }
 }
 
 
@@ -166,11 +201,13 @@ def wrappedLockHandler(evt) {
 		log "${wrappedLock.displayName}:locked detected"
 		log "${reliableLock.displayName}:setting locked"
 		reliableLock.markAsLocked()
+        state.desiredLockState = "locked"
 	}
 	else {
 		log "${wrappedLock.displayName}:unlocked detected"
 		log "${reliableLock.displayName}:setting unlocked"
 		reliableLock.markAsUnlocked()
+        state.desiredLockState = "unlocked"
 	}
 }
 
