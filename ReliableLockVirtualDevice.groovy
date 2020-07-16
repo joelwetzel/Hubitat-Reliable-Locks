@@ -1,5 +1,5 @@
 /**
- *  Reliable Lock Virtual Device  (Do not use outside of the Reliable Locks app!!!)
+ *  Reliable Lock Virtual Device v1.0  (Do not use outside of the Reliable Locks app!!!)
  *
  *  Copyright 2019 Joel Wetzel
  *
@@ -104,7 +104,5 @@ def markAsUnlocked() {
 	
 	sendEvent(name: "lock", value: "unlocked")
 }
-
-
 
 
