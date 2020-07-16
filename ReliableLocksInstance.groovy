@@ -1,5 +1,5 @@
 /**
- *  Reliable Locks Instance
+ *  Reliable Locks Instance v1.0
  *
  *  Copyright 2019 Joel Wetzel
  *
@@ -224,7 +224,3 @@ def log(msg) {
 		log.debug(msg)	
 	}
 }
-
-
-
-
