@@ -5,6 +5,11 @@ An app that will create virtual locks that 'wrap' your physical lock devices, ma
 Some smart locks are not reliable about reporting their status changes.  For example, my Kwikset z-wave locks will sometimes accept a lock command from Hubitat, lock themselves, but never report the 'locked' state back to Hubitat.  This app 'wraps' the locks inside a virtual lock that tries to make them more reliable.  Then you expose the virtual reliable lock to your dashboards, homekit, Alexa, or Google Home user interfaces.
 
 ## Installation
+
+The best way to install this code is by using [Hubitat Package Manager](https://community.hubitat.com/t/beta-hubitat-package-manager).
+
+However, if you must install manually:
+
 1. Go to the "Drivers Code" page in Hubitat
 2. Click "+ New Driver"
 3. Paste in the contents of ReliableLockVirtualDevice.groovy
