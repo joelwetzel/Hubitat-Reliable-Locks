@@ -1,5 +1,5 @@
 /**
- *  Reliable Locks Instance v1.0
+ *  Reliable Locks Instance v1.1
  *
  *  Copyright 2019 Joel Wetzel
  *
@@ -139,7 +139,7 @@ def lockWrappedLock() {
     state.desiredLockState = "locked"
     state.retryCount = 0
 	
-	runIn(refreshTime, refreshWrappedLock)
+	runIn(refreshTime, refreshWrappedLockAndRetryIfNecessary)
 }
 
 
@@ -153,11 +153,17 @@ def unlockWrappedLock() {
     state.desiredLockState = "unlocked"
     state.retryCount = 0
 	
-	runIn(refreshTime, refreshWrappedLock)
+	runIn(refreshTime, refreshWrappedLockAndRetryIfNecessary)
 }
 
 
 def refreshWrappedLock() {
+	log "${wrappedLock.displayName}:refreshing"
+	wrappedLock.refresh()
+}
+
+
+def refreshWrappedLockAndRetryIfNecessary() {
 	log "${wrappedLock.displayName}:refreshing"
 	wrappedLock.refresh()
     
@@ -188,7 +194,7 @@ def retryIfCommandNotFollowed() {
                 log "${wrappedLock.displayName}:unlocking"
 	            wrappedLock.unlock()
             }
-            runIn(refreshTime, refreshWrappedLock)
+            runIn(refreshTime, refreshWrappedLockAndRetryIfNecessary)
         }
     }
 }
@@ -224,3 +230,4 @@ def log(msg) {
 		log.debug(msg)	
 	}
 }
+
