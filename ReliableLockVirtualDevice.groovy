@@ -1,5 +1,5 @@
 /**
- *  Reliable Lock Virtual Device v1.0  (Do not use outside of the Reliable Locks app!!!)
+ *  Reliable Lock Virtual Device v1.3  (Do not use outside of the Reliable Locks app!!!)
  *
  *  Copyright 2019 Joel Wetzel
  *
@@ -24,6 +24,7 @@ metadata {
 		
 		command "markAsLocked"
 		command "markAsUnlocked"
+        command "setBattery"
 	}
 	
 	preferences {
@@ -104,5 +105,11 @@ def markAsUnlocked() {
 	
 	sendEvent(name: "lock", value: "unlocked")
 }
+
+
+def setBattery(val) {
+    sendEvent(name: "battery", value: val)
+}
+
 
 
