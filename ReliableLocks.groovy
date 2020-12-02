@@ -1,5 +1,5 @@
 /**
- *  Reliable Locks v1.0
+ *  Reliable Locks v1.2
  *
  *  Copyright 2019 Joel Wetzel
  *
