@@ -21,6 +21,7 @@ metadata {
 		capability "Sensor"
         capability "Actuator"
 		capability "Lock"
+		capability "Battery"
 		
 		command "markAsLocked"
 		command "markAsUnlocked"
