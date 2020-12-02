@@ -1,5 +1,5 @@
 /**
- *  Reliable Locks Instance v1.1
+ *  Reliable Locks Instance v1.2
  *
  *  Copyright 2019 Joel Wetzel
  *
@@ -26,6 +26,16 @@ definition(
 	iconUrl: "",
     iconX2Url: "",
     iconX3Url: "")
+
+
+def notificationDevice = [
+		name:				"notificationDevice",
+		type:				"capability.notification",
+		title:				"Devices for Notifications",
+		description:		"Send notifications to devices.  ie. push notifications to a phone.",
+		required:			false,
+		multiple:			true
+	]
 
 
 preferences {
@@ -61,6 +71,10 @@ preferences {
                 required:           true,
                 defaultValue:       false
             )
+		}
+        section(hideable: true, hidden: true, "Notifications") {
+			input notificationDevice
+			paragraph "This will send a notification if the lock doesn't respond even after repeated retries."
 		}
         section() {
             input (
@@ -104,6 +118,7 @@ def initialize() {
 	def reliableLock = getChildDevice("Reliable-${wrappedLock.displayName}")
 	
 	subscribe(wrappedLock, "lock", wrappedLockHandler)
+    subscribe(wrappedLock, "battery", batteryHandler)
 
 	// Generate a label for this child app
 	app.updateLabel("Reliable ${wrappedLock.displayName}")
@@ -183,7 +198,7 @@ def retryIfCommandNotFollowed() {
         log "Command was not followed. RetryCount is ${state.retryCount}."
         
         // Check if we have exceeded 2 retries.
-        if (state.retryCount < 3) {
+        if (state.retryCount < 2) {
             // If we still need to retry, fire off lockWrappedLock or unlockWrappedLock again.
             state.retryCount = state.retryCount + 1
             if (state.desiredLockState == "locked") {
@@ -195,6 +210,12 @@ def retryIfCommandNotFollowed() {
 	            wrappedLock.unlock()
             }
             runIn(refreshTime, refreshWrappedLockAndRetryIfNecessary)
+        }
+        else {
+            if (notificationDevice) {
+                def commandText = state.desiredLockState == "locked" ? "Lock" : "Unlock"
+                notificationDevice.deviceNotification("${wrappedLock.displayName} did not respond to repeated retries of the '${commandText}' command.")
+            }
         }
     }
 }
@@ -215,6 +236,15 @@ def wrappedLockHandler(evt) {
 		reliableLock.markAsUnlocked()
         state.desiredLockState = "unlocked"
 	}
+}
+
+
+def batteryHandler(evt) {
+	def reliableLock = getChildDevice("Reliable-${wrappedLock.displayName}")
+
+    log "${wrappedLock.displayName}:battery detected"
+    log "${reliableLock.displayName}:setting battery"
+    reliableLock.setBattery(wrappedLock.currentValue("battery"))
 }
 
 
