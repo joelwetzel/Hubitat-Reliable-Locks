@@ -1,5 +1,5 @@
 /**
- *  Reliable Locks Instance v1.2
+ *  Reliable Locks Instance v1.3
  *
  *  Copyright 2019 Joel Wetzel
  *
