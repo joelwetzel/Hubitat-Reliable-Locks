@@ -2,10 +2,10 @@
 	"packageName": "Reliable Locks",
 	"minimumHEVersion": "2.2.1",
 	"author": "Joel Wetzel",
-	"version": "1.3",
-	"dateReleased": "2020-12-2",
+	"version": "1.4",
+	"dateReleased": "2021-2-17",
 	"licenseFile": "https://raw.githubusercontent.com/joelwetzel/Hubitat-Auto-Shades/master/LICENSE",
-	"releaseNotes": "Added support for battery reporting.  Notification option if repeated retries fail.",
+	"releaseNotes": "Update to how battery reporting is handled.",
 	"communityLink": "https://community.hubitat.com/t/release-reliable-locks",
 	"documentationLink": "https://github.com/joelwetzel/Hubitat-Reliable-Locks",
 	"apps" : [
