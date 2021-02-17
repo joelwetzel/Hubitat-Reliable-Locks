@@ -1,5 +1,5 @@
 /**
- *  Reliable Locks Instance v1.3
+ *  Reliable Locks Instance v1.4
  *
  *  Copyright 2019 Joel Wetzel
  *
@@ -244,7 +244,15 @@ def batteryHandler(evt) {
 
     log "${wrappedLock.displayName}:battery detected"
     log "${reliableLock.displayName}:setting battery"
-    reliableLock.setBattery(wrappedLock.currentValue("battery"))
+    
+    def batteryValue = null
+    if (wrappedLock.currentValue("battery") != null) {
+        batteryValue = wrappedLock.currentValue("battery")
+    } else if (wrappedLock.currentBattery != null) {
+        batteryValue = wrappedLock.currentBattery
+    }
+    
+    reliableLock.setBattery(batteryValue)
 }
 
 
@@ -260,4 +268,5 @@ def log(msg) {
 		log.debug(msg)	
 	}
 }
+
 
