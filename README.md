@@ -2,7 +2,7 @@
 An app that will create virtual locks that 'wrap' your physical lock devices, making them more reliable.
 
 ## Purpose
-Some smart locks are not reliable about reporting their status changes.  For example, my Kwikset z-wave locks will sometimes accept a lock command from Hubitat, lock themselves, but never report the 'locked' state back to Hubitat.  This app 'wraps' the locks inside a virtual lock that tries to make them more reliable.  Then you expose the virtual reliable lock to your dashboards, homekit, Alexa, or Google Home user interfaces.
+Some smart locks are not reliable about reporting their status changes.  For example, my Kwikset z-wave locks will sometimes accept a lock command from Hubitat, lock themselves, but never report the 'locked' state back to Hubitat.  This app 'wraps' the locks inside a virtual lock that tries to make them more reliable.  Then you expose the virtual reliable lock to your dashboards, homekit, or Alexa user interfaces.
 
 ## Installation
 
