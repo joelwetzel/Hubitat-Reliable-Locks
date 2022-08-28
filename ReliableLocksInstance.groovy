@@ -230,12 +230,18 @@ def wrappedLockHandler(evt) {
 		reliableLock.markAsLocked()
         state.desiredLockState = "locked"
 	}
-	else {
+	else if(wrappedLock.currentValue("lock") == "unlocked"){
 		log "${wrappedLock.displayName}:unlocked detected"
 		log "${reliableLock.displayName}:setting unlocked"
 		reliableLock.markAsUnlocked()
         state.desiredLockState = "unlocked"
 	}
+	else{
+		log "${wrappedLock.displayName}:unknown state detected"
+		log "${reliableLock.displayName}:setting ${wrappedLock.currentValue('lock')}"
+		reliableLock.markAsUnknown(wrappedLock.currentValue("lock"))
+		state.desiredLockState = wrappedLock.currentValue("lock")
+    }
 }
 
 
@@ -268,5 +274,6 @@ def log(msg) {
 		log.debug(msg)	
 	}
 }
+
 
 

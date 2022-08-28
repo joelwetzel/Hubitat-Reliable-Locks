@@ -107,13 +107,15 @@ def markAsUnlocked() {
 	sendEvent(name: "lock", value: "unlocked")
 }
 
+// Mark as unknown without sending the event back to the parent app.  Called when the physical lock has jammed or is dead, to prevent cyclical firings.
+def markAsUnknown(state) {
+    log "${device.displayName}.markAsUnknown(${state})"
+	
+	sendEvent(name: "lock", value: state)
+}
 
 def setBattery(val) {
     if (val != null) {
         sendEvent(name: "battery", value: val)
     }
 }
-
-
-
-
